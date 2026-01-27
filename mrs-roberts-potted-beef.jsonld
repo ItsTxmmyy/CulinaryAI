@@ -1,0 +1,66 @@
+{
+  "@context": "https://schema.org/",
+  "@type": "Recipe",
+  "name": "Mrs. Roberts' Traditional Potted Beef",
+  "author": {
+    "@type": "Person",
+    "name": "Mrs. Roberts (Adapted)"
+  },
+  "description": "A modernized 18th-century recipe for Potted Beef: lean beef cured for four days, slow-braised until tender, and preserved under a layer of clarified butter.",
+  "recipeCategory": "Appetizer",
+  "recipeCuisine": "English",
+  "prepTime": "PT30M",
+  "cookTime": "PT4H",
+  "totalTime": "P4DT4H30M",
+  "recipeYield": "8 servings",
+  "recipeIngredient": [
+    "4 lbs lean beef (such as chuck or round), trimmed",
+    "1/2 tsp Pink Curing Salt #1 (Modern substitute for 2oz Saltpetre for safety/color)",
+    "4 tbsp dark brown sugar",
+    "1/4 cup kosher salt",
+    "2 cups water (for brine)",
+    "1 lb beef suet, shredded (or high-quality lard/tallow)",
+    "4 cups water (for braising)",
+    "1 tsp freshly ground black pepper",
+    "1/2 tsp ground nutmeg",
+    "1/2 cup clarified butter (for sealing the pots)"
+  ],
+  "recipeInstructions": [
+    {
+      "@type": "HowToStep",
+      "text": "Prepare the cure: Mix the curing salt, brown sugar, and kosher salt. Rub the mixture thoroughly into the beef."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Place the beef in a non-reactive container with 2 cups of water. Cover and refrigerate for 4 days, turning the meat twice daily."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "After 4 days, remove the beef from the brine and pat dry with a clean cloth."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Preheat your oven to 300°F (150°C). Place the beef in a heavy oven-proof pot or Dutch oven. Cover the meat with the shredded suet and add 4 cups of water."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Cover tightly and bake for approximately 4 hours, or until the beef is completely tender and falling apart."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Remove the beef from the liquid. Strain the liquid, reserving the fat that rises to the top. Carefully remove any remaining silver skin or gristle from the meat."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Place the warm beef in a food processor (or use a mortar and pestle). Add a few spoonfuls of the reserved cooking fat and pulse until the meat is a fine, spreadable paste. Season with additional salt, pepper, and nutmeg to taste."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Pack the beef mixture firmly into small ceramic pots or ramekins, smoothing the tops."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Once the meat has cooled, pour a layer of melted clarified butter over the top of each pot to seal it. Refrigerate until firm. Serve cold on toast."
+    }
+  ]
+}

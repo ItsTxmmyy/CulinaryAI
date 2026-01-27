@@ -1,0 +1,44 @@
+{
+  "@context": "https://schema.org/",
+  "@type": "Recipe",
+  "name": "Mrs. Roberts' Savory Sauce for Roast Fowl",
+  "author": {
+    "@type": "Person",
+    "name": "Mrs. Roberts (Adapted)"
+  },
+  "description": "A rich, savory gravy enhanced with white wine, anchovy, and mushrooms, perfect for roast chicken or turkey.",
+  "recipeCategory": "Sauce",
+  "recipeCuisine": "English",
+  "recipeIngredient": [
+    "2 cups rich beef gravy or high-quality beef stock",
+    "1/4 cup dry white wine",
+    "2 anchovy fillets, finely minced",
+    "1/2 tsp whole peppercorns",
+    "1/2 small yellow onion, finely minced",
+    "1/2 cup button mushrooms, finely chopped",
+    "2 tbsp unsalted butter, softened",
+    "2 tbsp all-purpose flour"
+  ],
+  "recipeInstructions": [
+    {
+      "@type": "HowToStep",
+      "text": "In a medium saucepan, combine the beef gravy, white wine, minced anchovies, peppercorns, onion, and mushrooms."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Bring the mixture to a boil, then reduce heat and simmer for 10-15 minutes to allow the flavors to meld."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "In a small bowl, mash the softened butter and flour together to form a smooth paste (beurre manié)."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Just before serving, whisk the butter-flour paste into the boiling sauce bit by bit until the sauce reaches a thick, glossy consistency."
+    },
+    {
+      "@type": "HowToStep",
+      "text": "Strain if a smooth sauce is desired, or serve chunky alongside roast fowl."
+    }
+  ]
+}

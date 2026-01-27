@@ -1,0 +1,5 @@
+{
+  "instruction": "Convert the following historical recipe into modern JSON-LD format. Update archaic measurements, correct spelling, and translate historical cooking techniques for a modern kitchen.",
+  "input": "To Pot Beef... [Insert Mrs. Roberts Original Text]",
+  "output": "{ \"@context\": \"https://schema.org/\", \"@type\": \"Recipe\", ... [Insert Structured JSON] }"
+}
