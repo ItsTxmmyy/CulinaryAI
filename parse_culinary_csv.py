@@ -32,6 +32,11 @@ def clean_transcript(text: str) -> str:
     # OCR artifacts
     text = text.replace('¬', '-')      # Hyphen artifacts from line breaks
     
+    # Strip page numbers (common at start/end of transcripts)
+    text = re.sub(r'^\s*\d+\s*\n', '', text)         # Leading page number
+    text = re.sub(r'\n\s*\d+\s*$', '', text)         # Trailing page number
+    text = re.sub(r'^\s*Page\s+\d+\s*\n', '', text, flags=re.IGNORECASE)  # "Page 23"
+    
     # Whitespace normalization (preserve paragraph structure)
     text = re.sub(r'\n{3,}', '\n\n', text)
     text = re.sub(r'[ \t]+', ' ', text)
@@ -39,13 +44,13 @@ def clean_transcript(text: str) -> str:
     return text.strip()
 
 
-def is_recipe_content(transcript: str) -> bool:
+def recipe_confidence(transcript: str) -> int:
     """
-    Heuristic to determine if a transcript contains recipe content.
-    Looks for common recipe indicators.
+    Calculate confidence score for recipe content.
+    Returns number of recipe indicators found (0 = not a recipe, higher = more confident).
     """
     if not transcript or len(transcript) < 50:
-        return False
+        return 0
     
     # Skip cover pages, blank pages, indexes, etc.
     skip_patterns = [
@@ -58,7 +63,7 @@ def is_recipe_content(transcript: str) -> bool:
     ]
     for pattern in skip_patterns:
         if re.match(pattern, transcript, re.IGNORECASE):
-            return False
+            return 0
     
     # Recipe indicators - common phrases in historical recipes
     recipe_indicators = [
@@ -89,11 +94,38 @@ def is_recipe_content(transcript: str) -> bool:
         r'\bcream\b',
     ]
     
-    matches = sum(1 for pattern in recipe_indicators 
-                  if re.search(pattern, transcript, re.IGNORECASE))
+    return sum(1 for pattern in recipe_indicators 
+               if re.search(pattern, transcript, re.IGNORECASE))
+
+
+def is_recipe_content(transcript: str) -> bool:
+    """Check if transcript is recipe content (requires 3+ indicators)."""
+    return recipe_confidence(transcript) >= 3
+
+
+def split_recipes(transcript: str) -> list[str]:
+    """
+    Split a transcript that may contain multiple recipes.
     
-    # Require at least 3 recipe indicators
-    return matches >= 3
+    Detects recipe boundaries by looking for title patterns like:
+    - "To make/pot/roast X"
+    - "A receipt for X"
+    - "Sauce for X"
+    """
+    # Pattern matches common recipe title starts
+    split_pattern = r'(?=\n(?:To (?:make|pot|dress|roast|boil|bake|fry|stew|pickle|preserve|candy)|Sauce for|A receipt|An? (?:excellent|good|fine) )\b)'
+    
+    parts = re.split(split_pattern, transcript, flags=re.IGNORECASE)
+    
+    # Clean up and filter out empty/tiny fragments
+    recipes = []
+    for part in parts:
+        part = part.strip()
+        if len(part) >= 50:  # Must be substantial
+            recipes.append(part)
+    
+    # If no split occurred, return the original as a single-item list
+    return recipes if recipes else [transcript]
 
 
 def extract_recipe_titles(transcript: str) -> list[str]:
@@ -136,6 +168,7 @@ def parse_csv(csv_path: str) -> list[dict]:
     Parse the Culinary Manuscripts CSV and extract transcripts.
     
     Returns a list of records with manuscript metadata and transcript text.
+    Splits pages with multiple recipes into separate records.
     """
     records = []
     
@@ -148,15 +181,25 @@ def parse_csv(csv_path: str) -> list[dict]:
             if not is_recipe_content(transcript):
                 continue
             
-            record = {
-                'item_id': row.get('item_id', ''),
-                'manuscript_title': row.get('main_object_title', ''),
-                'page': row.get('part_title', ''),
-                'transcript': transcript,
-                'detected_titles': extract_recipe_titles(transcript),
-                'char_count': len(transcript),
-            }
-            records.append(record)
+            # Split pages that contain multiple recipes
+            recipe_parts = split_recipes(transcript)
+            
+            for i, recipe_text in enumerate(recipe_parts):
+                # Only include parts that are actually recipes
+                if not is_recipe_content(recipe_text):
+                    continue
+                
+                record = {
+                    'item_id': row.get('item_id', ''),
+                    'manuscript_title': row.get('main_object_title', ''),
+                    'page': row.get('part_title', ''),
+                    'recipe_index': i + 1 if len(recipe_parts) > 1 else None,  # Track if split
+                    'transcript': recipe_text,
+                    'detected_titles': extract_recipe_titles(recipe_text),
+                    'char_count': len(recipe_text),
+                    'confidence': recipe_confidence(recipe_text),
+                }
+                records.append(record)
     
     return records
 
