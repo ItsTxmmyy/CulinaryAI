@@ -18,12 +18,24 @@ from collections import defaultdict
 
 
 def clean_transcript(text: str) -> str:
-    """Clean and normalize transcript text."""
+    """Clean and normalize transcript text.
+    
+    Minimal preprocessing - let the AI model handle historical
+    abbreviations and variations from context.
+    """
     if not text:
         return ""
-    # Remove extra whitespace but preserve paragraph breaks
+    
+    # Historical typography (safe substitutions only)
+    text = text.replace('ſ', 's')      # Long S → modern s
+    
+    # OCR artifacts
+    text = text.replace('¬', '-')      # Hyphen artifacts from line breaks
+    
+    # Whitespace normalization (preserve paragraph structure)
     text = re.sub(r'\n{3,}', '\n\n', text)
     text = re.sub(r'[ \t]+', ' ', text)
+    
     return text.strip()
 
 
