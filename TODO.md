@@ -71,18 +71,18 @@ The main missing bridge is:
 ## Phase A — Data ingestion (CSV → extracted transcript dataset)
 
 ### A1) Put the raw Culinary Manuscripts CSV export in the repo
-- [ ] Confirm the input CSV exists (example in repo): `culinary_collection7_20251218_141432.csv`
-- [ ] If you use a newer export, keep it in the repo root (or document the path).
+- [x] Confirm the input CSV exists (example in repo): `culinary_collection7_20251218_141432.csv`
+- [x] If you use a newer export, keep it in the repo root (or document the path).
 
 ### A2) Run the parser to generate `extracted_transcripts.json`
 
-- [ ] (Optional) Run analysis + print a few examples:
+- [x] (Optional) Run analysis + print a few examples:
 
 ```bash
 .venv/bin/python parse_culinary_csv.py --analyze --sample 5
 ```
 
-- [ ] Generate transcripts:
+- [x] Generate transcripts:
 
 ```bash
 .venv/bin/python parse_culinary_csv.py \
@@ -90,15 +90,15 @@ The main missing bridge is:
   --output extracted_transcripts.json
 ```
 
-- [ ] Confirm output exists and looks sane:
-  - [ ] `extracted_transcripts.json` exists
-  - [ ] Each record has: `item_id`, `manuscript_title`, `page`, `transcript`, `detected_titles`, `char_count`, `confidence`
+-- [x] Confirm output exists and looks sane:
+  - [x] `extracted_transcripts.json` exists
+  - [x] Each record has: `item_id`, `manuscript_title`, `page`, `transcript`, `detected_titles`, `char_count`, `confidence`
 
 ### A3) Sanity-check extraction quality (manual sampling)
-- [ ] Open `extracted_transcripts.json` and spot-check 20–50 records:
-  - [ ] “Cover/Index/Blank” pages are excluded
-  - [ ] Real recipe procedure text is included
-  - [ ] `detected_titles` look plausible when present
+- [x] Open `extracted_transcripts.json` and spot-check 20–50 records:
+  - [x] “Cover/Index/Blank” pages are excluded
+  - [x] Real recipe procedure text is included
+  - [x] `detected_titles` look plausible when present
 
 ---
 
@@ -110,54 +110,57 @@ You have two scripts that operate on `extracted_transcripts.json`:
 - `curate_training_data.py`: stronger curation (splitting, completeness checks, dedupe, post-validation)
 
 ### B1) Run robust curation to create `curated_training.json`
-- [ ] Create a curated set (start with 200):
+- [x] Create a curated set (start with 200):
 
 ```bash
 .venv/bin/python curate_training_data.py --count 200 --output curated_training.json --analyze
 ```
 
-- [ ] Inspect a handful of records in `curated_training.json`:
-  - [ ] Endings are not obviously cut off
-  - [ ] Damage markers (`[illegible]`, `[...]?`, etc.) are rare
-  - [ ] Multi-recipe splits look correct (if split)
+- [x] Inspect a handful of records in `curated_training.json`:
+  - [x] Endings are not obviously cut off
+  - [x] Damage markers (`[illegible]`, `[...]?`, etc.) are rare
+  - [x] Multi-recipe splits look correct (if split)
 
 ### B2) Create/refresh the smaller dev sample (`training_sample.json`)
-- [ ] Generate:
+- [x] Generate:
 
 ```bash
 .venv/bin/python create_training_sample.py --count 100 --output training_sample.json
 ```
 
-- [ ] Use `training_sample.json` as your “fast iteration” dataset.
+- [x] Use `training_sample.json` as your “fast iteration” dataset.
 
 ---
 
 ## Phase C — Define the task precisely (what should the model output?)
 
 ### C1) Choose output format (recommended: Schema.org Recipe JSON/JSON-LD)
-- [ ] Decide whether your training target is:
-  - [ ] JSON-LD (with `@context` and `@type: "Recipe"`)
+### C1) Choose output format (recommended: Schema.org Recipe JSON/JSON-LD)
+- [x] Decide whether your training target is:
+  - [x] JSON-LD (with `@context` and `@type: "Recipe"`)
   - [ ] or plain JSON that matches the same fields
-- [ ] Decide **required** fields:
-  - [ ] `name`
-  - [ ] `recipeIngredient` (list of strings)
-  - [ ] `recipeInstructions` (list of step objects or strings — pick one and stick to it)
-- [ ] Decide **optional** fields you might add later:
-  - [ ] `description`, `recipeYield`, `totalTime`, `author`, etc.
+- [x] Decide **required** fields:
+  - [x] `name`
+  - [x] `recipeIngredient` (list of strings)
+  - [x] `recipeInstructions` (list of strings; each step is a string)
+- [x] Decide **optional** fields you might add later:
+  - [x] `description`, `recipeYield`, `totalTime`, `author`
 
 ### C2) Decide what the model sees as input
-- [ ] Choose input payload:
+### C2) Decide what the model sees as input
+- [x] Choose input payload:
   - [ ] `transcript` only
   - [ ] transcript + `detected_titles`
-  - [ ] transcript + manuscript metadata (`manuscript_title`, `page`)
+  - [x] transcript + manuscript metadata (`manuscript_title`, `page`)
 
 ### C3) Write the canonical instruction (prompt)
-- [ ] Create a single instruction you’ll reuse across all training examples, e.g.:
-  - “Convert the transcript into Schema.org Recipe JSON. Output JSON only.”
-- [ ] Decide strictness:
-  - [ ] “JSON only” (no prose)
-  - [ ] No trailing commas
-  - [ ] Must pass schema validation
+### C3) Write the canonical instruction (prompt)
+- [x] Create a single instruction you’ll reuse across all training examples, e.g.:
+  - “You are an expert historical recipe normalizer. Convert the given manuscript recipe transcript and its manuscript metadata into a single Schema.org Recipe JSON-LD object. Use `\"@context\": \"https://schema.org\"` and `\"@type\": \"Recipe\"`. Populate at least `name`, `recipeIngredient` (as a list of ingredient strings), and `recipeInstructions` (as a list of step strings). When helpful, also include `description`, `recipeYield`, `totalTime`, and `author`. Infer reasonable modernized field values from the text, but do not invent information that is not supported by the transcript. Output strictly valid JSON-LD only, with no extra commentary or explanation.”
+- [x] Decide strictness:
+  - [x] “JSON only” (no prose)
+  - [x] No trailing commas
+  - [x] Must pass schema validation
 
 ---
 
@@ -166,16 +169,18 @@ You have two scripts that operate on `extracted_transcripts.json`:
 Right now, the repo doesn’t yet contain a script that **creates labeled examples** (input transcript → target recipe JSON).
 
 ### D1) Choose a training file format
-- [ ] Pick one:
-  - [ ] **JSONL** (recommended) — one example per line
+### D1) Choose a training file format
+- [x] Pick one:
+  - [x] **JSONL** (recommended) — one example per line
   - [ ] Alpaca-style JSON: `{ "instruction", "input", "output" }`
   - [ ] Chat format: `{ "messages": [...] }`
 
 ### D2) Create a generator script (to be added)
-- [ ] Create: `generate_training_examples.py`
-  - [ ] Input: `curated_training.json`
-  - [ ] Output: `training.jsonl` (or `training.json`)
-  - [ ] For each record, produces one training example with your canonical instruction + transcript input
+### D2) Create a generator script (to be added)
+- [x] Create: `generate_training_examples.py`
+  - [x] Input: `curated_training.json`
+  - [x] Output: `training.jsonl`
+  - [x] For each record, produces one training example with your canonical instruction + transcript + manuscript metadata as input
 
 ### D3) Decide how you will get the target outputs (“labels”)
 - [ ] **Human labels (best quality):**
